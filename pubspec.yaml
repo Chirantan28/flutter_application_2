@@ -59,9 +59,51 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  
+  assets:
+    - assets/idli_vada.jpg
+    - assets/vada.jpg
+    - assets/masala_dosa.jpg
+    - assets/set_dosa.jpg
+    - assets/chapathi_meals.jpg
+    - assets/orange_juice.jpg
+    - assets/moosambi_juice.jpg
+    - assets/oreo_milkshake.jpg
+    - assets/water_bottle.jpg
+    - assets/watermelon_juice.jpg
+    - assets/coffee.jpg
+    - assets/tea.jpg
+    - assets/limca.jpg
+    - assets/munch.jpg
+    - assets/kulcha_curry.jpg
+    - assets/roti_curry.jpg
+    - assets/gobi_parata.jpg
+    - assets/noodles.jpg
+    - assets/gobi_noodles.jpg
+    - assets/north_meals.jpg
+    - assets/soya_roll.jpg
+    - assets/paneer_roll.jpg
+    - assets/paneer_sandwich.jpg
+    - assets/samosa.jpg
+    - assets/donut.jpg
+    - assets/snickers.jpg
+    - assets/five_star.jpg
+    - assets/cold_coffee.jpg
+    - assets/mocha.jpg
+    - assets/latte.jpg
+    - assets/cold_brew.jpg
+    - assets/iced_coffee.jpg
+    - assets/cappuccino.jpg
+    - assets/espresso.jpg
+    - assets/fruit_bowl.jpg
+    - assets/burger.jpg
+    - assets/pen.jpg
+    - assets/pencil.jpg
+    - assets/eraser.jpg
+    - assets/notebook.jpg
+    - assets/record.jpg
+    - assets/datasheet.jpg
+    - assets/bluebook.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
