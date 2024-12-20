@@ -501,6 +501,16 @@ class OrdererPage extends StatelessWidget {
           },
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.purple,
+      ),
     );
   }
 }
@@ -1187,7 +1197,7 @@ class _BakeryPageState extends State<BakeryPage>
   late Animation<Offset> _animation;
 
   // List of items with images, names, and prices
-  final List<Map<String, dynamic>> bakeryItems = [
+  final List<Map<String, dynamic>> menuItems = [
     {
       'name': 'Paneer Sandwich',
       'price': 40,
@@ -1284,7 +1294,7 @@ class _BakeryPageState extends State<BakeryPage>
                   mainAxisSpacing: 8.0,
                   childAspectRatio: 0.75,
                 ),
-                itemCount: bakeryItems.length,
+                itemCount: menuItems.length,
                 itemBuilder: (context, index) {
                   return Card(
                     shape: RoundedRectangleBorder(
@@ -1298,7 +1308,7 @@ class _BakeryPageState extends State<BakeryPage>
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
                             child: Image.asset(
-                              bakeryItems[index]['image'],
+                              menuItems[index]['image'],
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -1306,7 +1316,7 @@ class _BakeryPageState extends State<BakeryPage>
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            bakeryItems[index]['name'],
+                            menuItems[index]['name'],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -1315,7 +1325,7 @@ class _BakeryPageState extends State<BakeryPage>
                           ),
                         ),
                         Text(
-                          '₹${bakeryItems[index]['price']}',
+                          '₹${menuItems[index]['price']}',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.green[700],
@@ -1379,7 +1389,7 @@ class _CafeDeCostaPageState extends State<CafeDeCostaPage>
   late Animation<Offset> _animation;
 
   // List of items with images, names, and prices
-  final List<Map<String, dynamic>> cafeItems = [
+  final List<Map<String, dynamic>> menuItems = [
     {'name': 'Espresso', 'price': 60, 'image': 'assets/espresso.jpg'},
     {'name': 'Cappuccino', 'price': 70, 'image': 'assets/cappuccino.jpg'},
     {'name': 'Latte', 'price': 80, 'image': 'assets/latte.jpg'},
@@ -1414,6 +1424,21 @@ class _CafeDeCostaPageState extends State<CafeDeCostaPage>
     setState(() {
       if (isIncrement) {
         quantities[index] = (quantities[index] ?? 0) + 1;
+
+        // Add item to the cart
+        final item = CartItem(
+          name: menuItems[index]['name'],
+          price: menuItems[index]['price'],
+          quantity: 1,
+        );
+        cartState.addItem(item);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added to cart'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         if ((quantities[index] ?? 0) > 0) {
           quantities[index] = (quantities[index] ?? 0) - 1;
@@ -1457,7 +1482,7 @@ class _CafeDeCostaPageState extends State<CafeDeCostaPage>
                   mainAxisSpacing: 8.0,
                   childAspectRatio: 0.75,
                 ),
-                itemCount: cafeItems.length,
+                itemCount: menuItems.length,
                 itemBuilder: (context, index) {
                   return Card(
                     shape: RoundedRectangleBorder(
@@ -1471,7 +1496,7 @@ class _CafeDeCostaPageState extends State<CafeDeCostaPage>
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
                             child: Image.asset(
-                              cafeItems[index]['image'],
+                              menuItems[index]['image'],
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -1479,7 +1504,7 @@ class _CafeDeCostaPageState extends State<CafeDeCostaPage>
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            cafeItems[index]['name'],
+                            menuItems[index]['name'],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -1488,7 +1513,7 @@ class _CafeDeCostaPageState extends State<CafeDeCostaPage>
                           ),
                         ),
                         Text(
-                          '₹${cafeItems[index]['price']}',
+                          '₹${menuItems[index]['price']}',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.green[700],
@@ -1526,6 +1551,16 @@ class _CafeDeCostaPageState extends State<CafeDeCostaPage>
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.purple,
       ),
     );
   }
@@ -1570,6 +1605,21 @@ class _LawCanteenPageState extends State<LawCanteenPage>
     setState(() {
       if (isIncrement) {
         quantities[index] = (quantities[index] ?? 0) + 1;
+
+        // Add item to the cart
+        final item = CartItem(
+          name: menuItems[index]['name'],
+          price: menuItems[index]['price'],
+          quantity: 1,
+        );
+        cartState.addItem(item);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added to cart'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         if ((quantities[index] ?? 0) > 0) {
           quantities[index] = (quantities[index] ?? 0) - 1;
@@ -1680,6 +1730,16 @@ class _LawCanteenPageState extends State<LawCanteenPage>
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.purple,
+      ),
     );
   }
 }
@@ -1694,7 +1754,7 @@ class _StationaryPageState extends State<StationaryPage>
   late AnimationController _controller;
   late Animation<Offset> _animation;
 
-  final List<Map<String, dynamic>> stationaryItems = [
+  final List<Map<String, dynamic>> menuItems = [
     {'name': 'Pen', 'price': 10, 'image': 'assets/pen.jpg'},
     {'name': 'Notebook', 'price': 40, 'image': 'assets/notebook.jpg'},
     {'name': 'Eraser', 'price': 5, 'image': 'assets/eraser.jpg'},
@@ -1728,6 +1788,21 @@ class _StationaryPageState extends State<StationaryPage>
     setState(() {
       if (isIncrement) {
         quantities[index] = (quantities[index] ?? 0) + 1;
+
+        // Add item to the cart
+        final item = CartItem(
+          name: menuItems[index]['name'],
+          price: menuItems[index]['price'],
+          quantity: 1,
+        );
+        cartState.addItem(item);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added to cart'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         if ((quantities[index] ?? 0) > 0) {
           quantities[index] = (quantities[index] ?? 0) - 1;
@@ -1770,7 +1845,7 @@ class _StationaryPageState extends State<StationaryPage>
                   mainAxisSpacing: 8.0,
                   childAspectRatio: 0.75,
                 ),
-                itemCount: stationaryItems.length,
+                itemCount: menuItems.length,
                 itemBuilder: (context, index) {
                   return Card(
                     shape: RoundedRectangleBorder(
@@ -1784,7 +1859,7 @@ class _StationaryPageState extends State<StationaryPage>
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(15),
                             child: Image.asset(
-                              stationaryItems[index]['image'],
+                              menuItems[index]['image'],
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -1792,7 +1867,7 @@ class _StationaryPageState extends State<StationaryPage>
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Text(
-                            stationaryItems[index]['name'],
+                            menuItems[index]['name'],
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -1801,7 +1876,7 @@ class _StationaryPageState extends State<StationaryPage>
                           ),
                         ),
                         Text(
-                          '₹${stationaryItems[index]['price']}',
+                          '₹${menuItems[index]['price']}',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.green[700],
@@ -1838,6 +1913,16 @@ class _StationaryPageState extends State<StationaryPage>
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.blue,
+      ),
     );
   }
 }
@@ -1852,7 +1937,7 @@ class _XeroxPageState extends State<XeroxPage>
   late AnimationController _controller;
   late Animation<Offset> _animation;
 
-  final List<Map<String, dynamic>> xeroxItems = [
+  final List<Map<String, dynamic>> menuItems = [
     {'name': 'Single Page Xerox', 'price': 2},
     {'name': 'Double Page Xerox', 'price': 3},
     {'name': 'Lamination', 'price': 20},
@@ -1883,6 +1968,21 @@ class _XeroxPageState extends State<XeroxPage>
     setState(() {
       if (isIncrement) {
         quantities[index] = (quantities[index] ?? 0) + 1;
+
+        // Add item to the cart
+        final item = CartItem(
+          name: menuItems[index]['name'],
+          price: menuItems[index]['price'],
+          quantity: 1,
+        );
+        cartState.addItem(item);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added to cart'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         if ((quantities[index] ?? 0) > 0) {
           quantities[index] = (quantities[index] ?? 0) - 1;
@@ -1918,7 +2018,7 @@ class _XeroxPageState extends State<XeroxPage>
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8.0),
-              itemCount: xeroxItems.length,
+              itemCount: menuItems.length,
               itemBuilder: (context, index) {
                 return Card(
                   shape: RoundedRectangleBorder(
@@ -1931,7 +2031,7 @@ class _XeroxPageState extends State<XeroxPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          xeroxItems[index]['name'],
+                          menuItems[index]['name'],
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -1939,7 +2039,7 @@ class _XeroxPageState extends State<XeroxPage>
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Price: ₹${xeroxItems[index]['price']}',
+                          'Price: ₹${menuItems[index]['price']}',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.green[700],
@@ -1995,6 +2095,16 @@ class _XeroxPageState extends State<XeroxPage>
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.orange,
       ),
     );
   }
