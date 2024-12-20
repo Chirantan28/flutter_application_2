@@ -5,6 +5,43 @@ void main() {
   runApp(MyApp());
 }
 
+class CartItem {
+  final String name;
+  final int price;
+  int quantity;
+
+  CartItem({required this.name, required this.price, this.quantity = 1});
+}
+
+class CartState {
+  List<CartItem> items = [];
+  int studCharge = 5;
+
+  int get subtotal =>
+      items.fold(0, (sum, item) => sum + (item.price * item.quantity));
+  int get total => subtotal + studCharge;
+
+  void addItem(CartItem item) {
+    final existingItem = items.firstWhere((i) => i.name == item.name,
+        orElse: () => CartItem(name: '', price: 0));
+    if (existingItem.name.isEmpty) {
+      items.add(item);
+    } else {
+      existingItem.quantity += item.quantity;
+    }
+  }
+
+  void removeItem(String name) {
+    items.removeWhere((item) => item.name == name);
+  }
+
+  void clearCart() {
+    items.clear();
+  }
+}
+
+final cartState = CartState(); // Global instance
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -139,90 +176,6 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-
-// Registration Page
-// class RegistrationPage extends StatelessWidget {
-//   final TextEditingController usnController = TextEditingController();
-//   final TextEditingController nameController = TextEditingController();
-//   final TextEditingController branchController = TextEditingController();
-//   final TextEditingController mobileController = TextEditingController();
-//   String selectedGender = 'Male';
-//   DateTime selectedDate = DateTime.now();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Register')),
-//       body: SingleChildScrollView(
-//         child: Padding(
-//           padding: EdgeInsets.all(20),
-//           child: Column(
-//             children: [
-//               TextField(
-//                 controller: usnController,
-//                 decoration: InputDecoration(labelText: 'USN'),
-//               ),
-//               TextField(
-//                 controller: nameController,
-//                 decoration: InputDecoration(labelText: 'Name'),
-//               ),
-//               TextField(
-//                 controller: branchController,
-//                 decoration: InputDecoration(labelText: 'Branch'),
-//               ),
-//               TextField(
-//                 controller: mobileController,
-//                 decoration: InputDecoration(labelText: 'Mobile Number'),
-//                 keyboardType: TextInputType.phone,
-//               ),
-//               DropdownButton<String>(
-//                 value: selectedGender,
-//                 items: ['Male', 'Female', 'Other']
-//                     .map((gender) => DropdownMenuItem(
-//                           child: Text(gender),
-//                           value: gender,
-//                         ))
-//                     .toList(),
-//                 onChanged: (value) {
-//                   selectedGender = value!;
-//                 },
-//               ),
-//               SizedBox(height: 20),
-//               Row(
-//                 children: [
-//                   Text(
-//                       'Date of Birth: ${selectedDate.toLocal()}'.split(' ')[0]),
-//                   Spacer(),
-//                   ElevatedButton(
-//                     onPressed: () async {
-//                       DateTime? pickedDate = await showDatePicker(
-//                         context: context,
-//                         initialDate: selectedDate,
-//                         firstDate: DateTime(2000),
-//                         lastDate: DateTime.now(),
-//                       );
-//                       if (pickedDate != null && pickedDate != selectedDate) {
-//                         selectedDate = pickedDate;
-//                       }
-//                     },
-//                     child: Text('Select Date'),
-//                   ),
-//                 ],
-//               ),
-//               SizedBox(height: 20),
-//               ElevatedButton(
-//                 onPressed: () {
-//                   Navigator.pop(context);
-//                 },
-//                 child: Text('Register'),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class RegistrationPage extends StatelessWidget {
   final TextEditingController usnController = TextEditingController();
@@ -413,6 +366,64 @@ class _MainAppPageState extends State<MainAppPage> {
   }
 }
 
+class CartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Your Cart'),
+      ),
+      body: cartState.items.isEmpty
+          ? Center(child: Text('Your cart is empty!'))
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: cartState.items.length,
+                    itemBuilder: (context, index) {
+                      final item = cartState.items[index];
+                      return ListTile(
+                        title: Text(item.name),
+                        subtitle: Text('₹${item.price} x ${item.quantity}'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            cartState.removeItem(item.name);
+                            (context as Element).markNeedsBuild();
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Subtotal'),
+                  trailing: Text('₹${cartState.subtotal}'),
+                ),
+                ListTile(
+                  title: Text('Stud Charge'),
+                  trailing: Text('₹${cartState.studCharge}'),
+                ),
+                ListTile(
+                  title: Text('Total'),
+                  trailing: Text('₹${cartState.total}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Proceed to payment or checkout
+                    },
+                    child: Text('Proceed to Payment'),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
 // Orderer Page
 
 class OrdererPage extends StatelessWidget {
@@ -506,7 +517,6 @@ class _ESBCanteenPageState extends State<ESBCanteenPage>
   late AnimationController _controller;
   late Animation<Offset> _animation;
 
-  // List of items with images, names, and prices
   final List<Map<String, dynamic>> items = [
     {'name': 'Idli Vada', 'price': 45, 'image': 'assets/idli_vada.jpg'},
     {'name': 'Vada', 'price': 20, 'image': 'assets/vada.jpg'},
@@ -536,7 +546,6 @@ class _ESBCanteenPageState extends State<ESBCanteenPage>
     },
   ];
 
-  // Quantity tracker
   final Map<int, int> quantities = {};
 
   @override
@@ -654,6 +663,22 @@ class _ESBCanteenPageState extends State<ESBCanteenPage>
                                 setState(() {
                                   quantities[index] =
                                       (quantities[index] ?? 0) + 1;
+
+                                  // Add item to cart
+                                  final item = CartItem(
+                                    name: items[index]['name'],
+                                    price: items[index]['price'],
+                                    quantity: 1,
+                                  );
+                                  cartState.addItem(item);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('${item.name} added to cart'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
                                 });
                               },
                             ),
@@ -667,6 +692,16 @@ class _ESBCanteenPageState extends State<ESBCanteenPage>
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.purple,
       ),
     );
   }
@@ -770,7 +805,6 @@ class _SouthMessPageState extends State<SouthMessPage>
   late AnimationController _controller;
   late Animation<Offset> _animation;
 
-  // List of items with images, names, and prices
   final List<Map<String, dynamic>> menuItems = [
     {'name': 'Idli Vada', 'price': 45, 'image': 'assets/idli_vada.jpg'},
     {'name': 'Vada', 'price': 20, 'image': 'assets/vada.jpg'},
@@ -788,7 +822,6 @@ class _SouthMessPageState extends State<SouthMessPage>
     {'name': 'Munch', 'price': 20, 'image': 'assets/munch.jpg'},
   ];
 
-  // Quantity tracker
   final Map<int, int> quantities = {};
 
   @override
@@ -809,11 +842,25 @@ class _SouthMessPageState extends State<SouthMessPage>
     super.dispose();
   }
 
-  // Function to update quantity of the item
   void updateQuantity(int index, bool isIncrement) {
     setState(() {
       if (isIncrement) {
         quantities[index] = (quantities[index] ?? 0) + 1;
+
+        // Add item to the cart
+        final item = CartItem(
+          name: menuItems[index]['name'],
+          price: menuItems[index]['price'],
+          quantity: 1,
+        );
+        cartState.addItem(item);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added to cart'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         if ((quantities[index] ?? 0) > 0) {
           quantities[index] = (quantities[index] ?? 0) - 1;
@@ -831,7 +878,6 @@ class _SouthMessPageState extends State<SouthMessPage>
       ),
       body: Column(
         children: [
-          // Welcome text with slide animation
           SlideTransition(
             position: _animation,
             child: Padding(
@@ -852,7 +898,7 @@ class _SouthMessPageState extends State<SouthMessPage>
               padding: const EdgeInsets.all(8.0),
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 items per row
+                  crossAxisCount: 2,
                   crossAxisSpacing: 8.0,
                   mainAxisSpacing: 8.0,
                   childAspectRatio: 0.75,
@@ -901,8 +947,7 @@ class _SouthMessPageState extends State<SouthMessPage>
                             IconButton(
                               icon: Icon(Icons.remove_circle_outline),
                               onPressed: () {
-                                updateQuantity(
-                                    index, false); // Decrease quantity
+                                updateQuantity(index, false);
                               },
                             ),
                             Text(
@@ -912,8 +957,7 @@ class _SouthMessPageState extends State<SouthMessPage>
                             IconButton(
                               icon: Icon(Icons.add_circle_outline),
                               onPressed: () {
-                                updateQuantity(
-                                    index, true); // Increase quantity
+                                updateQuantity(index, true);
                               },
                             ),
                           ],
@@ -927,10 +971,21 @@ class _SouthMessPageState extends State<SouthMessPage>
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.purple,
+      ),
     );
   }
 }
 
+//North Mess page
 class NorthMessPage extends StatefulWidget {
   @override
   _NorthMessPageState createState() => _NorthMessPageState();
@@ -979,6 +1034,21 @@ class _NorthMessPageState extends State<NorthMessPage>
     setState(() {
       if (isIncrement) {
         quantities[index] = (quantities[index] ?? 0) + 1;
+
+        // Add item to the cart
+        final item = CartItem(
+          name: menuItems[index]['name'],
+          price: menuItems[index]['price'],
+          quantity: 1,
+        );
+        cartState.addItem(item);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added to cart'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         if ((quantities[index] ?? 0) > 0) {
           quantities[index] = (quantities[index] ?? 0) - 1;
@@ -1092,6 +1162,16 @@ class _NorthMessPageState extends State<NorthMessPage>
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.purple,
+      ),
     );
   }
 }
@@ -1146,6 +1226,21 @@ class _BakeryPageState extends State<BakeryPage>
     setState(() {
       if (isIncrement) {
         quantities[index] = (quantities[index] ?? 0) + 1;
+
+        // Add item to the cart
+        final item = CartItem(
+          name: menuItems[index]['name'],
+          price: menuItems[index]['price'],
+          quantity: 1,
+        );
+        cartState.addItem(item);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${item.name} added to cart'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       } else {
         if ((quantities[index] ?? 0) > 0) {
           quantities[index] = (quantities[index] ?? 0) - 1;
@@ -1258,6 +1353,16 @@ class _BakeryPageState extends State<BakeryPage>
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CartPage()),
+          );
+        },
+        child: Icon(Icons.shopping_cart, size: 30),
+        backgroundColor: Colors.purple,
       ),
     );
   }
